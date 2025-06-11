@@ -10,7 +10,7 @@ app.get("/", (req, res) => {
   res.send(" plant server running");
 });
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 console.log(process.env.DB_USER, process.env.DB_PASS);
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@clusteralpha.2srbfo8.mongodb.net/?retryWrites=true&w=majority&appName=ClusterAlpha`;
 
@@ -47,9 +47,44 @@ async function run() {
       res.send(result);
     });
 
-    // app patch
+    app.get("/myplants/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await plantCollection.findOne(query);
+      res.send(result);
+    });
+    app.get("/plants/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await plantCollection.findOne(query);
+      res.send(result);
+    });
+
+    // app UPDATE
+    app.put("/myplants/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const updatedPlantDetails = req.body;
+      const updatedDoc = {
+        $set: updatedPlantDetails,
+      };
+      const result = await plantCollection.updateOne(
+        filter,
+        updatedDoc,
+        option
+      );
+      res.send(result);
+    });
 
     // app delete
+    app.delete("/myplants/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await plantCollection.deleteOne(query);
+      console.log(result);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 2 });
