@@ -30,6 +30,7 @@ async function run() {
 
     const plantDatabase = client.db("plantDatabase");
     const plantCollection = plantDatabase.collection("plants");
+    const usersCollection = plantDatabase.collection("usersInfo");
     // app post
 
     app.post("/plants", async (req, res) => {
@@ -85,6 +86,16 @@ async function run() {
       console.log(result);
       res.send(result);
     });
+
+    // user api
+
+    app.post("/users", async (req, res) => {
+      const userProfile = req.body;
+      const result = await usersCollection.insertOne(userProfile);
+      res.send(result);
+    });
+    
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 2 });
