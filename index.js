@@ -25,14 +25,14 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
+    // Connect the client to the server
     await client.connect();
 
     const plantDatabase = client.db("plantDatabase");
     const plantCollection = plantDatabase.collection("plants");
     const usersCollection = plantDatabase.collection("usersInfo");
-    // app post
 
+    // app post
     app.post("/plants", async (req, res) => {
       const newPlant = req.body;
       console.log(newPlant);
@@ -88,6 +88,8 @@ async function run() {
     });
 
     // user api
+
+    // user get
     app.get("/users", async (req, res) => {
       const email = req.query.email;
       if (!email) {
@@ -108,7 +110,7 @@ async function run() {
       const result = await usersCollection.findOne(query);
       res.send(result);
     });
-
+    // user post
     app.post("/users", async (req, res) => {
       const userProfile = req.body;
       const result = await usersCollection.insertOne(userProfile);
@@ -116,6 +118,7 @@ async function run() {
     });
 
     // Add a GET endpoint if needed for the loader
+    // user load and update
     app.put("/users/:id", async (req, res) => {
       const id = req.params.id;
       if (!ObjectId.isValid(id)) {
