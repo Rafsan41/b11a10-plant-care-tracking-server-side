@@ -24,12 +24,13 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server
+    // Connect the client to the server api
     await client.connect();
 
     const plantDatabase = client.db("plantDatabase");
     const plantCollection = plantDatabase.collection("plants");
     const usersCollection = plantDatabase.collection("usersInfo");
+    //plant api
 
     // app post
     app.post("/plants", async (req, res) => {
@@ -142,7 +143,6 @@ async function run() {
     await client.db("admin").command({ ping: 2 });
     console.log("You successfully connected to MongoDB!");
   } finally {
-    // Ensures that the client will close when you finish/error
     // await client.close();
   }
 }
