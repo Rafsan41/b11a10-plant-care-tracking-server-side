@@ -63,8 +63,8 @@ async function run() {
 
     // app UPDATE
     app.put("/myplants/:id", async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: new ObjectId(id) };
+      const _id = req.params.id;
+      const filter = { _id: new ObjectId(_id) };
       const option = { upsert: true };
       const updatedPlantDetails = req.body;
       const updatedDoc = {
@@ -88,14 +88,53 @@ async function run() {
     });
 
     // user api
+    app.get("/users", async (req, res) => {
+      const email = req.query.email;
+      if (!email) {
+        return res
+          .status(400)
+          .send({ error: "Email query parameter is required" });
+      }
+      const user = await usersCollection.findOne({ email });
+      if (!user) {
+        return res.status(404).send({ error: "User not found" });
+      }
+      res.send(user);
+    });
+
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    });
 
     app.post("/users", async (req, res) => {
       const userProfile = req.body;
       const result = await usersCollection.insertOne(userProfile);
       res.send(result);
     });
-    
 
+    // Add a GET endpoint if needed for the loader
+    app.put("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).send({ error: "Invalid user ID format" });
+      }
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const updatedUser = { $set: req.body };
+      try {
+        const result = await usersCollection.updateOne(
+          filter,
+          updatedUser,
+          option
+        );
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ error: "Update Failed" });
+      }
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 2 });
