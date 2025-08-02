@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server api
-    await client.connect();
+    // await client.connect();
 
     const plantDatabase = client.db("plantDatabase");
     const plantCollection = plantDatabase.collection("plants");
@@ -88,7 +88,6 @@ async function run() {
     });
 
     // user api
-
     // user get
     app.get("/users", async (req, res) => {
       const email = req.query.email;
@@ -139,8 +138,6 @@ async function run() {
       }
     });
 
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 2 });
     console.log("You successfully connected to MongoDB!");
   } finally {
     // await client.close();
